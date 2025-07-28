@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Grammar Quest - Neon Learning</title>
+    <style>
+        :root {
+            --neon-purple: #6e44ff;
+            --neon-pink: #ff44b4;
+            --neon-cyan: #00ffcc;
+            --neon-green: #00ff88;
+            --dark-bg: #0f0f1a;
+            --card-bg: #1a1a2e;
+            --input-bg: #2a2a3a;
+        }
+        
+        body {
+            background-color: var(--dark-bg);
+            color: #e0e0ff;
+            font-family: 'Segoe UI', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        /* Никнейм форма */
+        .nickname-form {
+            text-align: center;
+            margin-bottom: 30px;
+            animation: fadeIn 1s;
+        }
+        
+        .nickname-form input {
+            background-color: var(--input-bg);
+            color: var(--neon-cyan);
+            border: 2px solid var(--neon-purple);
+            padding: 12px 20px;
+            font-size: 18px;
+            border-radius: 30px;
+            width: 300px;
+            text-align: center;
+            margin-right: 10px;
+        }
+        
+        .nickname-form button {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            font-size: 18px;
+            border-radius: 30px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .nickname-form button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(110, 68, 255, 0.4);
+        }
+        
+        /* Прогресс бар */
+        .progress-container {
+            width: 100%;
+            background-color: #252540;
+            border-radius: 10px;
+            margin: 20px 0;
+            box-shadow: 0 0 10px rgba(0,0,0,0.3);
+        }
+        
+        .progress-bar {
+            height: 15px;
+            border-radius: 10px;
+            background: linear-gradient(90deg, var(--neon-purple), var(--neon-pink));
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+        
+        .progress-text {
+            text-align: center;
+            margin-top: 5px;
+            font-size: 14px;
+            color: var(--neon-cyan);
+        }
+        
+        /* Статус игрока */
+        .player-status {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: rgba(42, 42, 58, 0.7);
+            border-radius: 10px;
+            border-left: 3px solid var(--neon-purple);
+        }
+        
+        .player-name {
+            font-size: 20px;
+            font-weight: bold;
+            color: var(--neon-cyan);
+        }
+        
+        .player-score {
+            font-size: 18px;
+            color: white;
+        }
+        
+        .player-score span {
+            color: var(--neon-green);
+            font-weight: bold;
+        }
+        
+        /* Упражнения */
+        .exercise {
+            background-color: var(--card-bg);
+            border-left: 4px solid var(--neon-purple);
+            box-shadow: 0 0 15px rgba(110, 68, 255, 0.3);
+            margin-bottom: 30px;
+            padding: 20px;
+            border-radius: 8px;
+            animation: slideUp 0.5s ease;
+        }
+        
+        h2 {
+            color: white;
+            margin-top: 0;
+            font-size: 22px;
+            border-bottom: 1px solid #3a3a5a;
+            padding-bottom: 10px;
+        }
+        
+        .example {
+            font-style: italic;
+            color: #a0a0c0;
+            margin-bottom: 15px;
+            background-color: rgba(42, 42, 58, 0.5);
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 2px solid var(--neon-pink);
+        }
+        
+        .question {
+            margin-bottom: 15px;
+            padding: 15px;
+            background-color: rgba(42, 42, 58, 0.3);
+            border-radius: 5px;
+            position: relative;
+        }
+        
+        input[type="text"] {
+            background-color: var(--input-bg);
+            color: var(--neon-cyan);
+            border: 1px solid var(--neon-purple);
+            padding: 8px 12px;
+            border-radius: 4px;
+            margin: 0 5px;
+            font-size: 16px;
+            transition: border 0.3s, box-shadow 0.3s;
+        }
+        
+        input[type="text"]:focus {
+            outline: none;
+            border-color: var(--neon-pink);
+            box-shadow: 0 0 8px rgba(255, 68, 180, 0.5);
+        }
+        
+        button {
+            background: linear-gradient(45deg, var(--neon-purple), var(--neon-pink));
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 10px rgba(110, 68, 255, 0.3);
+        }
+        
+        button:active {
+            transform: translateY(1px);
+        }
+        
+        .feedback {
+            display: none;
+            margin-top: 10px;
+            padding: 8px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        
+        .correct {
+            background-color: rgba(0, 255, 136, 0.1);
+            color: var(--neon-green);
+            text-shadow: 0 0 5px var(--neon-green);
+            border-left: 3px solid var(--neon-green);
+        }
+        
+        .incorrect {
+            background-color: rgba(255, 68, 68, 0.1);
+            color: #ff4444;
+            border-left: 3px solid #ff4444;
+        }
+        
+        /* Анимации */
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        @keyframes slideUp {
+            from { 
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        
+        /* Адаптивность */
+        @media (max-width: 600px) {
+            .nickname-form input {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 10px;
+            }
+            
+            .nickname-form button {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Форма для ввода никнейма -->
+        <div class="nickname-form" id="nicknameForm">
+            <h1 style="color: var(--neon-cyan); margin-bottom: 20px;">Grammar Quest</h1>
+            <p style="margin-bottom: 20px;">Enter your nickname to start the learning adventure!</p>
+            <input type="text" id="nicknameInput" placeholder="Your cool nickname" maxlength="15">
+            <button onclick="startGame()">Start Learning</button>
+        </div>
+        
+        <!-- Статус игрока (показывается после ввода никнейма) -->
+        <div id="playerStatus" style="display: none;">
+            <div class="player-status">
+                <div class="player-name" id="displayName">Player</div>
+                <div class="player-score">Score: <span id="scoreDisplay">0</span></div>
+            </div>
+            
+            <!-- Прогресс бар -->
+            <div class="progress-container">
+                <div class="progress-bar" id="progressBar"></div>
+            </div>
+            <div class="progress-text" id="progressText">0/16 exercises completed</div>
+        </div>
+        
+        <!-- Упражнения (показываются после ввода никнейма) -->
+        <div id="exercisesContainer" style="display: none;">
+            <div class="exercise">
+                <h2><span>💡</span> Exercise 1. Make it negative ✅➡️❌</h2>
+                <div class="example">
+                    Example: She plays the piano. ➡️ She doesn't play the piano.
+                </div>
+                
+                <div class="question" id="q1">
+                    1. They like pizza. ➡️ They <input type="text" id="a1" size="10"> pizza.
+                    <button onclick="checkAnswer('a1', 'don\'t like', 1)">Check</button>
+                    <div id="f1" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q2">
+                    2. He plays tennis every day. ➡️ He <input type="text" id="a2" size="10"> tennis every day.
+                    <button onclick="checkAnswer('a2', 'doesn\'t play', 2)">Check</button>
+                    <div id="f2" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q3">
+                    3. I do homework every evening. ➡️ I <input type="text" id="a3" size="10"> homework every evening.
+                    <button onclick="checkAnswer('a3', 'don\'t do', 3)">Check</button>
+                    <div id="f3" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q4">
+                    4. We like jazz music. ➡️ We <input type="text" id="a4" size="10"> jazz music.
+                    <button onclick="checkAnswer('a4', 'don\'t like', 4)">Check</button>
+                    <div id="f4" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q5">
+                    5. She always drinks tea. ➡️ She <input type="text" id="a5" size="10"> always drink tea.
+                    <button onclick="checkAnswer('a5', 'doesn\'t', 5)">Check</button>
+                    <div id="f5" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q6">
+                    6. You go to school on Saturdays. ➡️ You <input type="text" id="a6" size="10"> to school on Saturdays.
+                    <button onclick="checkAnswer('a6', 'don\'t go', 6)">Check</button>
+                    <div id="f6" class="feedback"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h2><span>💡</span> Exercise 2. Write DO or DOES and complete the short answers</h2>
+                <div class="example">
+                    Example: Does she play the guitar? ➡️ ✅ Yes, she does. ❌ No, she doesn't.
+                </div>
+                
+                <div class="question" id="q7">
+                    1. <input type="text" id="a7" size="4"> they play chess? ➡️ ✅ Yes, <input type="text" id="a7a" size="6">. ❌ No, <input type="text" id="a7b" size="8">.
+                    <button onclick="checkMultiAnswer(['a7','a7a','a7b'], ['Do','they do','they don\'t'], 7)">Check</button>
+                    <div id="f7" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q8">
+                    2. <input type="text" id="a8" size="4"> she do yoga every morning? ➡️ ✅ Yes, <input type="text" id="a8a" size="6">. ❌ No, <input type="text" id="a8b" size="8">.
+                    <button onclick="checkMultiAnswer(['a8','a8a','a8b'], ['Does','she does','she doesn\'t'], 8)">Check</button>
+                    <div id="f8" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q9">
+                    3. <input type="text" id="a9" size="4"> you play basketball on weekends? ➡️ ✅ Yes, <input type="text" id="a9a" size="6">. ❌ No, <input type="text" id="a9b" size="8">.
+                    <button onclick="checkMultiAnswer(['a9','a9a','a9b'], ['Do','I do','I don\'t'], 9)">Check</button>
+                    <div id="f9" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q10">
+                    4. <input type="text" id="a10" size="4"> I do karate after school? ➡️ ✅ Yes, <input type="text" id="a10a" size="6">. ❌ No, <input type="text" id="a10b" size="8">.
+                    <button onclick="checkMultiAnswer(['a10','a10a','a10b'], ['Do','you do','you don\'t'], 10)">Check</button>
+                    <div id="f10" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q11">
+                    5. <input type="text" id="a11" size="4"> he play the piano every day? ➡️ ✅ Yes, <input type="text" id="a11a" size="6">. ❌ No, <input type="text" id="a11b" size="8">.
+                    <button onclick="checkMultiAnswer(['a11','a11a','a11b'], ['Does','he does','he doesn\'t'], 11)">Check</button>
+                    <div id="f11" class="feedback"></div>
+                </div>
+            </div>
+
+            <div class="exercise">
+                <h2><span>💡</span> Exercise 3. Complete the questions with Where/When/How often</h2>
+                <div class="example">
+                    Example: HOW OFTEN do you play football? ➡️ I play football every day
+                </div>
+                
+                <div class="question" id="q12">
+                    1. <input type="text" id="a12" size="10"> do you play football? ➡️ I play football at school.
+                    <button onclick="checkAnswer('a12', 'Where', 12)">Check</button>
+                    <div id="f12" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q13">
+                    2. <input type="text" id="a13" size="10"> does Mary play the piano? ➡️ She always plays the piano on Mondays.
+                    <button onclick="checkAnswer('a13', 'When', 13)">Check</button>
+                    <div id="f13" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q14">
+                    3. <input type="text" id="a14" size="10"> do your friends play basketball? ➡️ They play basketball in the park.
+                    <button onclick="checkAnswer('a14', 'Where', 14)">Check</button>
+                    <div id="f14" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q15">
+                    4. <input type="text" id="a15" size="10"> do the children play basketball? ➡️ They play basketball on Saturdays.
+                    <button onclick="checkAnswer('a15', 'When', 15)">Check</button>
+                    <div id="f15" class="feedback"></div>
+                </div>
+                
+                <div class="question" id="q16">
+                    5. <input type="text" id="a16" size="10"> does John do judo? ➡️ He does judo every day.
+                    <button onclick="checkAnswer('a16', 'How often', 16)">Check</button>
+                    <div id="f16" class="feedback"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <audio id="correctSound" src="https://assets.mixkit.co/sfx/preview/mixkit-correct-answer-tone-2870.mp3"></audio>
+    <audio id="wrongSound" src="https://assets.mixkit.co/sfx/preview/mixkit-wrong-answer-fail-notification-946.mp3"></audio>
+    <audio id="completeSound" src="https://assets.mixkit.co/sfx/preview/mixkit-achievement-bell-600.mp3"></audio>
+
+    <script>
+        // Глобальные переменные
+        let playerName = "";
+        let score = 0;
+        let completedExercises = 0;
+        const totalExercises = 16;
+        
+        // Элементы аудио
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const completeSound = document.getElementById('completeSound');
+        
+        // Начать игру после ввода никнейма
+        function startGame() {
+            const nickname = document.getElementById('nicknameInput').value.trim();
+            if (nickname === "") {
+                alert("Please enter your nickname!");
+                return;
+            }
+            
+            playerName = nickname;
+            document.getElementById('displayName').textContent = playerName;
+            document.getElementById('nicknameForm').style.display = 'none';
+            document.getElementById('playerStatus').style.display = 'block';
+            document.getElementById('exercisesContainer').style.display = 'block';
+            
+            // Анимация появления
+            const exercises = document.querySelectorAll('.exercise');
+            exercises.forEach((ex, index) => {
+                ex.style.animationDelay = `${index * 0.1}s`;
+            });
+        }
+        
+        // Проверка ответа
+        function checkAnswer(inputId, correctAnswer, questionNum) {
+            const input = document.getElementById(inputId);
+            const feedback = document.getElementById('f' + inputId.substring(1));
+            const userAnswer = input.value.trim().toLowerCase();
+            
+            if (userAnswer === correctAnswer.toLowerCase()) {
+                feedback.textContent = "✓ Correct! +10 points";
+                feedback.className = "feedback correct";
+                score += 10;
+                updateScore();
+                correctSound.play();
+                markCompleted(questionNum);
+            } else {
+                feedback.textContent = "✗ Incorrect. Try again!";
+                feedback.className = "feedback incorrect";
+                wrongSound.play();
+            }
+            feedback.style.display = "block";
+        }
+        
+        // Проверка нескольких ответов
+        function checkMultiAnswer(inputIds, correctAnswers, questionNum) {
+            let allCorrect = true;
+            const feedbackId = 'f' + inputIds[0].substring(1);
+            const feedback = document.getElementById(feedbackId);
+            
+            for (let i = 0; i < inputIds.length; i++) {
+                const input = document.getElementById(inputIds[i]);
+                const userAnswer = input.value.trim().toLowerCase();
+                
+                if (userAnswer !== correctAnswers[i].toLowerCase()) {
+                    allCorrect = false;
+                    break;
+                }
+            }
+            
+            if (allCorrect) {
+                feedback.textContent = "✓ All correct! +15 points";
+                feedback.className = "feedback correct";
+                score += 15;
+                updateScore();
+                correctSound.play();
+                markCompleted(questionNum);
+            } else {
+                feedback.textContent = "✗ Some answers are incorrect. Try again!";
+                feedback.className = "feedback incorrect";
+                wrongSound.play();
+            }
+            feedback.style.display = "block";
+        }
+        
+        // Обновление счета
+        function updateScore() {
+            document.getElementById('scoreDisplay').textContent = score;
+            document.getElementById('scoreDisplay').style.animation = 'pulse 0.5s';
+            setTimeout(() => {
+                document.getElementById('scoreDisplay').style.animation = '';
+            }, 500);
+        }
+        
+        // Отметить упражнение как выполненное
+        function markCompleted(questionNum) {
+            if (!document.getElementById(`q${questionNum}`).classList.contains('completed')) {
+                document.getElementById(`q${questionNum}`).classList.add('completed');
+                completedExercises++;
+                updateProgress();
+                
+                if (completedExercises === totalExercises) {
+                    setTimeout(() => {
+                        completeSound.play();
+                        alert(`Congratulations ${playerName}! You've completed all exercises with ${score} points!`);
+                    }, 500);
+                }
+            }
+        }
+        
+        // Обновить прогресс бар
+        function updateProgress() {
+            const progress = (completedExercises / totalExercises) * 100;
+            document.getElementById('progressBar').style.width = `${progress}%`;
+            document.getElementById('progressText').textContent = 
+                `${completedExercises}/${totalExercises} exercises completed`;
+        }
+        
+        // Обработка нажатия Enter в поле никнейма
+        document.getElementById('nicknameInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                startGame();
+            }
+        });
+    </script>
+</body>
+</html>
